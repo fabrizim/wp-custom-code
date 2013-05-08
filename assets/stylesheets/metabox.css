@@ -1,0 +1,70 @@
+
+.custom-code .repeatable {
+  width: 100%;
+}
+.custom-code .repeatable th {
+  font-weight: bold;
+  padding: 2px;
+}
+.custom-code .repeatable td {
+  padding: 2px;
+}
+.custom-code .repeatable thead {
+  display: none;
+}
+
+.custom-code .repeatable tfoot td {
+  padding: 0;
+}
+
+.custom-code .repeatable thead th {
+  text-align: left;
+}
+.custom-code .repeatable tbody .clone {
+  display: none;
+}
+.custom-code .repeatable tbody td {
+  background: #eee;
+  border-bottom: 1px solid #fff;
+}
+
+.custom-code .repeatable .src {
+  width: 40%;
+}
+.custom-code .repeatable .deps {
+  width: 25%;
+}
+.custom-code .repeatable .version {
+  width: 10%;
+}
+.custom-code .repeatable .handle {
+  width: 25%;
+}
+
+
+.custom-code .styles .deps {
+  width: 15%;
+}
+.custom-code .styles .src {
+  width: 35%;
+}
+.custom-code .styles .media {
+  width: 15%;
+}
+
+
+.custom-code .repeatable .input {
+  width: 100%;
+}
+
+.custom-code .add-button-container {
+  text-align: left;
+}
+
+.custom-code label {
+  
+}
+
+.custom-code .form-table th {
+  width: 120px;
+}

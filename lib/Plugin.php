@@ -45,6 +45,23 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
   
   public function meta_box( $post )
   {
+    
+    $js_files = array();
+    $css_files = array();
+    $js_deps = array();
+    $css_deps = array();
+    if( $post && $post->ID ){
+      $js_files = get_post_meta( $post->ID, $this->js_meta_key.'_files', true );
+      $css_files = get_post_meta( $post->ID, $this->css_meta_key.'_files', true );
+      $js_deps = get_post_meta( $post->ID, $this->js_meta_key.'_inline_deps', true);
+      $css_deps = get_post_meta( $post->ID, $this->css_meta_key.'_inline_deps', true);
+    }
+    if( !is_array( $js_files ) ) $js_files = array();
+    if( !is_array( $css_files ) ) $css_files = array();
+    if( !is_array( $js_deps ) ) $js_deps = array();
+    if( !is_array( $css_deps ) ) $css_deps = array();
+    
+    
     ?>
     <div class="custom-code">
       
@@ -59,44 +76,156 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
       <link rel="stylesheet" href="<?= CUSTOM_CODE_BASE_URI ?>/assets/stylesheets/metabox.css">
       <script src="<?= CUSTOM_CODE_BASE_URI ?>/assets/javascripts/metabox.js"></script>
       
-      <table class="repeatable">
-        <thead>
-          <tr>
-            <th>&nbsp;</th>
-            <th>ID</th>
-            <th>Source</th>
-            <th>Dependencies</th>
-          </tr>
-        </thead>
+      
+      <table class="form-table">
         <tbody>
-          <tr class="clone">
-            <td class="number">{index}</td>
-            <td class="id"><input type="text" class="input" name="<?= $this->js_meta_key ?>_id[]" /></td>
-            <td class="src"><input type="text" class="input" name="<?= $this->js_meta_key ?>_src[]" /></td>
-            <td class="deps"><input type="text" class="input" name="<?= $this->js_meta_key ?>_deps[]" /></td>
-          </tr>
-        </tbody>
-        <tfoot>
           <tr>
-            <td colspan="4">
-              <button class="button button-primary">Add Javascript File</button>
+            <th scope="row">
+              <label for="<?= $this->js_meta_key ?>_add">
+                Javascript Files
+              </label>
+            </th>
+            <td>
+              <table class="repeatable enqueue scripts" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th class="handle">Handle</th>
+                    <th>Source</th>
+                    <th>Dependencies</th>
+                    <th>Version</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="customcode-file clone">
+                    <td class="handle"><input type="text" class="input" data-name="<?= $this->js_meta_key ?>_handle[]" /></td>
+                    <td class="src"><input type="text" class="input" data-name="<?= $this->js_meta_key ?>_src[]" /></td>
+                    <td class="deps"><input type="text" class="input" data-name="<?= $this->js_meta_key ?>_deps[]" /></td>
+                    <td class="version"><input type="text" class="input" data-name="<?= $this->js_meta_key ?>_version[]" /></td>
+                    <td class="remove"><button class="button button-remove" type="button">Remove</button></td>
+                  </tr>
+                  <? foreach( $js_files as $file ) { ?>
+                  <tr>
+                    <td class="handle"><input type="text" class="input" name="<?= $this->js_meta_key ?>_handle[]" value="<?= esc_attr( $file['handle'] ) ?>" /></td>
+                    <td class="src"><input type="text" class="input" name="<?= $this->js_meta_key ?>_src[]" value="<?= esc_attr( $file['src'] ) ?>" /></td>
+                    <td class="deps"><input type="text" class="input" name="<?= $this->js_meta_key ?>_deps[]" value="<?= esc_attr( implode(', ',$file['deps']) ) ?>"/></td>
+                    <td class="version"><input type="text" class="input" name="<?= $this->js_meta_key ?>_version[]" value="<?= esc_attr( $file['version'] ) ?>"/></td>
+                    <td class="remove"><button class="button button-remove" type="button">Remove</button></td>
+                  </tr>
+                  <? } ?>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="10" class="add-button-container">
+                      <button id="<?= $this->js_meta_key ?>_add" class="button button-primary button-add" type="button">Add Javascript File</button>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
             </td>
           </tr>
-        </tfoot>
+          <tr>
+            <th scope="row">
+              <label for="<?= $this->js_meta_key ?>_inline_deps">JS Dependencies</label>
+            </th>
+            <td>
+              <input type="text"
+                     name="<?= $this->js_meta_key ?>_inline_deps"
+                     id="<?= $this->js_meta_key ?>_inline_deps"
+                     value="<?= esc_attr(implode(', ',$js_deps)) ?>" />
+              <p>A comma separated list of wordpress javascript files to enqueue by handle (example: jquery)</p>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              <label for="<?= $this->js_meta_key ?>">Inline Javascript</label>
+            </th>
+            <td>
+              <textarea name="<?= $this->js_meta_key ?>" id="<?= $this->js_meta_key ?>"><?
+                if( $post->ID ) {
+                  echo get_post_meta( $post->ID, $this->js_meta_key, true );
+                }
+              ?></textarea>
+            </td>
+          </tr>
+          
+          
+          <tr>
+            <th scope="row">
+              <label for="<?= $this->css_meta_key ?>_add">
+                Stylesheets
+              </label>
+            </th>
+            <td>
+              <table class="repeatable enqueue styles" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th class="handle">Handle</th>
+                    <th>Source</th>
+                    <th>Dependencies</th>
+                    <th>Version</th>
+                    <th>Media</th>
+                    <th>&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="customcode-file clone">
+                    <td class="handle"><input type="text" class="input" data-name="<?= $this->css_meta_key ?>_handle[]" /></td>
+                    <td class="src"><input type="text" class="input" data-name="<?= $this->css_meta_key ?>_src[]" /></td>
+                    <td class="deps"><input type="text" class="input" data-name="<?= $this->css_meta_key ?>_deps[]" /></td>
+                    <td class="version"><input type="text" class="input" data-name="<?= $this->css_meta_key ?>_version[]" /></td>
+                    <td class="media"><input type="text" class="input" data-name="<?= $this->css_meta_key ?>_media[]" /></td>
+                    <td class="remove"><button class="button button-remove" type="button">Remove</button></td>
+                  </tr>
+                  <? foreach( $css_files as $file ) { ?>
+                  <tr>
+                    <td class="handle"><input type="text" class="input" name="<?= $this->css_meta_key ?>_handle[]" value="<?= esc_attr( $file['handle'] ) ?>" /></td>
+                    <td class="src"><input type="text" class="input" name="<?= $this->css_meta_key ?>_src[]" value="<?= esc_attr( $file['src'] ) ?>" /></td>
+                    <td class="deps"><input type="text" class="input" name="<?= $this->css_meta_key ?>_deps[]" value="<?= esc_attr( implode(', ', $file['deps']) ) ?>"/></td>
+                    <td class="version"><input type="text" class="input" name="<?= $this->css_meta_key ?>_version[]" value="<?= esc_attr( $file['version'] ) ?>"/></td>
+                    <td class="media"><input type="text" class="input" name="<?= $this->css_meta_key ?>_media[]" value="<?= esc_attr( $file['media'] ) ?>" /></td>
+                    <td class="remove"><button class="button button-remove" type="button">Remove</button></td>
+                  </tr>
+                  <? } ?>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="10" class="add-button-container">
+                      <button id="<?= $this->css_meta_key ?>_add" class="button button-primary button-add" type="button">Add Stylesheet</button>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              <label for="<?= $this->css_meta_key ?>_inline_deps">CSS Dependencies</label>
+            </th>
+            <td>
+              <input type="text"
+                     name="<?= $this->css_meta_key ?>_inline_deps"
+                     id="<?= $this->css_meta_key ?>_inline_deps"
+                     value="<?= esc_attr(implode(', ',$css_deps)) ?>" />
+              <p>A comma separated list of wordpress CSS files to enqueue by handle.</p>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">
+              <label for="<?= $this->css_meta_key ?>">Inline Style</label>
+            </th>
+            <td>
+              <textarea name="<?= $this->css_meta_key ?>" id="<?= $this->css_meta_key ?>"><?
+                if( $post->ID ) {
+                  echo get_post_meta( $post->ID, $this->css_meta_key, true );
+                }
+              ?></textarea>
+            </td>
+          </tr>
+          
+        </tbody>
       </table>
       
-      <label for="<?= $this->js_meta_key ?>">Javascript</label>
-      <textarea name="<?= $this->js_meta_key ?>" id="<?= $this->js_meta_key ?>"><?
-        if( $post->ID ) {
-          echo get_post_meta( $post->ID, $this->js_meta_key, true );
-        }
-      ?></textarea>
-      <label for="<?= $this->js_meta_key ?>">CSS</label>
-      <textarea name="<?= $this->css_meta_key ?>" id="<?= $this->css_meta_key ?>"><?
-        if( $post->ID ) {
-          echo get_post_meta( $post->ID, $this->css_meta_key, true );
-        }
-      ?></textarea>
       <script type="text/javascript">
           CodeMirror.fromTextArea(document.getElementById("<?= $this->js_meta_key ?>"), {
             mode: 'javascript',
@@ -116,6 +245,7 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
         border: 1px solid #ccc;
         border-radius: 4px;
         margin-bottom: 10px;
+        overflow-x: scroll;
       }
       </style>
     </div>
@@ -127,12 +257,53 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
    */
   public function save_post( $post_id )
   {
+    
+    // inline
     if( isset( $_REQUEST[$this->js_meta_key] ) ){
       update_post_meta( $post_id, $this->js_meta_key, $_REQUEST[$this->js_meta_key] );
     }
     if( isset( $_REQUEST[$this->css_meta_key] ) ){
       update_post_meta( $post_id, $this->css_meta_key, $_REQUEST[$this->css_meta_key] );
     }
+    
+    // check for files
+    if( isset( $_REQUEST[$this->js_meta_key.'_src']) && is_array($_REQUEST[$this->js_meta_key.'_src']) ){
+      $files = array();
+      foreach(  $_REQUEST[$this->js_meta_key.'_src'] as $i => $src ){
+        if( $src ) $files[] = array(
+          'handle'  => $_REQUEST[$this->js_meta_key.'_handle'][$i],
+          'src'     => $src,
+          'deps'    => array_map('trim', explode(',', $_REQUEST[$this->js_meta_key.'_deps'][$i])),
+          'version' => $_REQUEST[$this->js_meta_key.'_version'][$i]
+        );
+      }
+      update_post_meta( $post_id, $this->js_meta_key.'_files', $files );
+    }
+    
+    if( isset( $_REQUEST[$this->css_meta_key.'_src']) && is_array($_REQUEST[$this->css_meta_key.'_src']) ){
+      $files = array();
+      foreach(  $_REQUEST[$this->css_meta_key.'_src'] as $i => $src ){
+        $files[] = array(
+          'handle'  => $_REQUEST[$this->css_meta_key.'_handle'][$i],
+          'src'     => $src,
+          'deps'    => array_map('trim', explode(',', $_REQUEST[$this->css_meta_key.'_deps'][$i])),
+          'version' => $_REQUEST[$this->css_meta_key.'_version'][$i],
+          'media'   => $_REQUEST[$this->css_meta_key.'_media'][$i]
+        );
+      }
+      update_post_meta( $post_id, $this->css_meta_key.'_files', $files );
+    }
+    
+    // check for dependencies
+    if( isset( $_REQUEST[$this->js_meta_key.'_inline_deps']) ){
+      update_post_meta( $post_id, $this->js_meta_key.'_inline_deps', array_map('trim', explode(',', $_REQUEST[$this->js_meta_key.'_inline_deps'])) );
+    }
+    
+    if( isset( $_REQUEST[$this->css_meta_key.'_inline_deps']) ){
+      update_post_meta( $post_id, $this->css_meta_key.'_inline_deps', array_map('trim', explode(',', $_REQUEST[$this->css_meta_key.'_inline_deps'])) );
+    }
+    
+    
   }
   
   /**
@@ -154,4 +325,53 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
     <?
   }
   
+  /**
+   * @wp.action
+   */
+  public function wp_enqueue_scripts()
+  {
+    if( is_admin() || !is_singular() ) return;
+    
+    // dependencies
+    $js_deps = get_post_meta( get_the_ID(), $this->js_meta_key.'_inline_deps', true);
+    if( $js_deps && is_array($js_deps) ) foreach($js_deps as $dep) wp_enqueue_script($dep);
+    
+    $css_deps = get_post_meta( get_the_ID(), $this->css_meta_key.'_inline_deps', true);
+    if( $css_deps && is_array($css_deps) ) foreach($css_deps as $dep) wp_enqueue_style($dep);
+    
+    
+    // add our scripts if we have any
+    $js_files = get_post_meta( get_the_ID(), $this->js_meta_key.'_files', true );
+    
+    if( $js_files && is_array($js_files) ) foreach($js_files as $file) {
+      $src = preg_replace_callback('/\{\$([^\}]+)\}/', array(&$this,'replacer'), $file['src']);
+      $handle = $file['handle']?$file['handle']:$src;
+      $deps = $file['deps'];
+      $version = $file['version'] ? $file['version'] : null;
+      wp_enqueue_script($handle, $src, array_filter($deps), $version );
+    }
+    
+    $css_files = get_post_meta( get_the_ID(), $this->css_meta_key.'_files', true );
+    if( $css_files && is_array($css_files) ) foreach($css_files as $file) {
+      $src = preg_replace_callback('/\{\$([^\}]+)\}/', array(&$this,'replacer'), $file['src']);
+      $handle = $file['handle']?$file['handle']:$src;
+      $deps = $file['deps'];
+      $version = $file['version'] ? $file['version'] : null;
+      $media = $file['media'] ? $file['media'] : null;
+      wp_enqueue_style( $handle, $src, array_filter($deps), $version, $media );
+    }
+    
+  }
+  
+  protected function replacer($matches)
+  {
+    switch( $matches[1] ){
+      case 'stylesheet_url':
+        return get_stylesheet_directory_uri();
+      case 'template_url':
+        return get_template_directory_uri();
+      default:
+        return '';
+    }
+  }
 }

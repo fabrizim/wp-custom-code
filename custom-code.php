@@ -38,7 +38,7 @@ add_action('init', function(){
   }
   
   Snap_Loader::register('CustomCode', dirname(__FILE__).'/lib');
-  define( 'CUSTOM_CODE_BASE_URI', plugins_url('/', __FILE__) );
+  define( 'CUSTOM_CODE_BASE_URI', plugins_url('', __FILE__) );
   
   // dispatch the plugin
   Snap::inst('CustomCode_Plugin');
