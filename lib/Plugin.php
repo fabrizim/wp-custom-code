@@ -1,5 +1,21 @@
 <?php
-
+/*
+      ___         ___                   
+     /\__\       /\  \         _____    
+    /:/ _/_     /::\  \       /::\  \   
+   /:/ /\__\   /:/\:\  \     /:/\:\  \  
+  /:/ /:/  /  /:/ /::\  \   /:/ /::\__\ 
+ /:/_/:/  /  /:/_/:/\:\__\ /:/_/:/\:|__|
+ \:\/:/  /   \:\/:/  \/__/ \:\/:/ /:/  /
+  \::/__/     \::/__/       \::/_/:/  / 
+   \:\  \      \:\  \        \:\/:/  /  
+    \:\__\      \:\__\        \::/  /   
+     \/__/       \/__/         \/__/
+     
+  
+  WP hooks all up in heer
+  
+*/
 class CustomCode_Plugin extends Snap_Wordpress_Plugin
 {
   
@@ -31,11 +47,43 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
   {
     ?>
     <div class="custom-code">
-      <script src="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/lib/codemirror.js"></script>
+      
+      <!-- CodeMirror Assets -->
       <link rel="stylesheet" href="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/lib/codemirror.css">
       <link rel="stylesheet" href="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/theme/blackboard.css">
+      <script src="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/lib/codemirror.js"></script>
       <script src="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/mode/javascript/javascript.js"></script>
       <script src="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/mode/css/css.js"></script>
+      
+      <!-- Plugin Metabox Assets -->
+      <link rel="stylesheet" href="<?= CUSTOM_CODE_BASE_URI ?>/assets/stylesheets/metabox.css">
+      <script src="<?= CUSTOM_CODE_BASE_URI ?>/assets/javascripts/metabox.js"></script>
+      
+      <table class="repeatable">
+        <thead>
+          <tr>
+            <th>&nbsp;</th>
+            <th>ID</th>
+            <th>Source</th>
+            <th>Dependencies</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="clone">
+            <td class="number">{index}</td>
+            <td class="id"><input type="text" class="input" name="<?= $this->js_meta_key ?>_id[]" /></td>
+            <td class="src"><input type="text" class="input" name="<?= $this->js_meta_key ?>_src[]" /></td>
+            <td class="deps"><input type="text" class="input" name="<?= $this->js_meta_key ?>_deps[]" /></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4">
+              <button class="button button-primary">Add Javascript File</button>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
       
       <label for="<?= $this->js_meta_key ?>">Javascript</label>
       <textarea name="<?= $this->js_meta_key ?>" id="<?= $this->js_meta_key ?>"><?
