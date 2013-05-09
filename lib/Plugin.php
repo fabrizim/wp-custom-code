@@ -140,12 +140,12 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
             <th scope="row">
               <label for="<?= $this->js_meta_key ?>">Inline Javascript</label>
             </th>
-            <td>
-              <textarea name="<?= $this->js_meta_key ?>" id="<?= $this->js_meta_key ?>"><?
+            <td><div class="codemirror-container">
+              <textarea name="<?= $this->js_meta_key ?>" id="<?= $this->js_meta_key ?>" class="codemirror js"><?
                 if( $post->ID ) {
                   echo get_post_meta( $post->ID, $this->js_meta_key, true );
                 }
-              ?></textarea>
+              ?></textarea></div>
             </td>
           </tr>
           
@@ -214,40 +214,17 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
             <th scope="row">
               <label for="<?= $this->css_meta_key ?>">Inline Style</label>
             </th>
-            <td>
-              <textarea name="<?= $this->css_meta_key ?>" id="<?= $this->css_meta_key ?>"><?
+            <td><div class="codemirror-container">
+              <textarea name="<?= $this->css_meta_key ?>" id="<?= $this->css_meta_key ?>" class="codemirror css"><?
                 if( $post->ID ) {
                   echo get_post_meta( $post->ID, $this->css_meta_key, true );
                 }
-              ?></textarea>
+              ?></textarea></div>
             </td>
           </tr>
           
         </tbody>
       </table>
-      
-      <script type="text/javascript">
-          CodeMirror.fromTextArea(document.getElementById("<?= $this->js_meta_key ?>"), {
-            mode: 'javascript',
-            theme: 'blackboard',
-            lineNumbers: true
-          });
-          CodeMirror.fromTextArea(document.getElementById("<?= $this->css_meta_key ?>"), {
-            mode: 'css',
-            theme: 'blackboard',
-            lineNumbers: true
-          });
-      </script>
-      <style type="text/css">
-      .custom-code .CodeMirror{
-        width: 100%;
-        height: 300px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        margin-bottom: 10px;
-        overflow-x: scroll;
-      }
-      </style>
     </div>
     <?
   }

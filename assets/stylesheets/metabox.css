@@ -68,3 +68,23 @@
 .custom-code .form-table th {
   width: 120px;
 }
+.custom-code .codemirror-container{
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  height: 300px;
+}
+
+.custom-code .CodeMirror{
+  top: 0;
+  position: absolute;
+  width: 100%;
+  height: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.custom-code .CodeMirror-scroll {
+  overflow-y: hidden;
+  overflow-x: auto;
+}

@@ -29,4 +29,32 @@ jQuery(function($){
       $table.find('thead').hide();
     }
   });
+  
+  $('table.enqueue').each(function(){
+    if ( $(this).find('tbody tr').length > 1 ) {
+      $(this).find('thead').show();
+    }
+  });
+  
+  CodeMirror.fromTextArea($('.codemirror.js')[0], {
+    mode: 'javascript',
+    theme: 'blackboard',
+    lineNumbers: true,
+    viewportMargin: Infinity
+  });
+  CodeMirror.fromTextArea($('.codemirror.css')[0], {
+    mode: 'css',
+    theme: 'blackboard',
+    lineNumbers: true,
+    viewportMargin: Infinity
+  });
+  
+  var $cm = $('.custom-code .CodeMirror');
+  $(window).on('resize', fix_width);
+  fix_width();
+  function fix_width() {
+    $cm.each(function(){
+      $(this).width($(this).parents('.codemirror-container').width());
+    });
+  }
 });
