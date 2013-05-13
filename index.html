@@ -31,19 +31,6 @@
 
       <section>
         <div id="title">
-          <pre>
-      ___         ___                   
-     /\__\       /\  \         _____    
-    /:/ _/_     /::\  \       /::\  \   
-   /:/ /\__\   /:/\:\  \     /:/\:\  \  
-  /:/ /:/  /  /:/ /::\  \   /:/ /::\__\ 
- /:/_/:/  /  /:/_/:/\:\__\ /:/_/:/\:|__|
- \:\/:/  /   \:\/:/  \/__/ \:\/:/ /:/  /
-  \::/__/     \::/__/       \::/_/:/  / 
-   \:\  \      \:\  \        \:\/:/  /  
-    \:\__\      \:\__\        \::/  /   
-     \/__/       \/__/         \/__/
-          </pre>
           <h1>Wordpress Custom Code</h1>
           <p>A Wordpress Plugin that lets you add Javascript and CSS to any post type</p>
           <hr>
@@ -52,7 +39,24 @@
         </div>
 
         <h3>What is Wordpress Custom Code?</h3>
-        <p>Its a plugin that allows you to enqueue javascript and stylesheets for all post types in Wordpress.</p>
+        <p>
+        A plugin that allows you to enqueue javascript and stylesheets for all post types in Wordpress.
+        I mean, HTML5 is really HTML + CSS + JS right? So shouldn't you have the ability to create more than
+        just HTML for Wordpress pages? The Wordpress editor mangles your code and there is never a good
+        way to edit with syntax highlighting fun. This plugin uses CodeMirror for your editing enjoyment.
+        </p>
+        
+        <h3>How do I use it?</h3>
+        <p>
+          Just grab an archive and install it. I suppose I could hook up to the Wordpress Plugin
+          area, but then I have to deal with SVN and that blows.
+        </p>
+        <p>
+          Once installed, you will have "Custom Code" meta box where you can enqueue scripts and
+          write your own code that will be added inline on the page. When adding JS or CSS files,
+          it uses the same parameters as wp_enqueue_script and wp_enqueue_style, so refer to those
+          for more info.
+        </p>
       </section>
 
     </div>
