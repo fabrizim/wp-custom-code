@@ -62,21 +62,17 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
     if( !is_array( $css_deps ) ) $css_deps = array();
     
     
+    wp_enqueue_style( 'custom-code-codemirror', CUSTOM_CODE_BASE_URI.'/vendor/CodeMirror/lib/codemirror.css');
+    wp_enqueue_style( 'custom-code-codemirror-theme', CUSTOM_CODE_BASE_URI.'/vendor/CodeMirror/theme/blackboard.css');
+    wp_enqueue_script( 'custom-code-codemirror', CUSTOM_CODE_BASE_URI.'/vendor/CodeMirror/lib/codemirror.js');
+    wp_enqueue_script( 'custom-code-codemirror-js', CUSTOM_CODE_BASE_URI.'/vendor/CodeMirror/mode/javascript/javascript.js');
+    wp_enqueue_script( 'custom-code-codemirror-css', CUSTOM_CODE_BASE_URI.'/vendor/CodeMirror/mode/css/css.js');
+    
+    wp_enqueue_style('custom-code-metabox', CUSTOM_CODE_BASE_URI.'/assets/stylesheets/metabox.css');
+    wp_enqueue_script('custom-code-metabox', CUSTOM_CODE_BASE_URI.'/assets/javascripts/metabox.js');
+    
     ?>
     <div class="custom-code">
-      
-      <!-- CodeMirror Assets -->
-      <link rel="stylesheet" href="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/lib/codemirror.css">
-      <link rel="stylesheet" href="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/theme/blackboard.css">
-      <script src="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/lib/codemirror.js"></script>
-      <script src="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/mode/javascript/javascript.js"></script>
-      <script src="<?= CUSTOM_CODE_BASE_URI ?>/vendor/CodeMirror/mode/css/css.js"></script>
-      
-      <!-- Plugin Metabox Assets -->
-      <link rel="stylesheet" href="<?= CUSTOM_CODE_BASE_URI ?>/assets/stylesheets/metabox.css">
-      <script src="<?= CUSTOM_CODE_BASE_URI ?>/assets/javascripts/metabox.js"></script>
-      
-      
       <table class="form-table">
         <tbody>
           <tr>

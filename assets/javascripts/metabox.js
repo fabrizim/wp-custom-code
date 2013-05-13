@@ -36,13 +36,15 @@ jQuery(function($){
     }
   });
   
-  CodeMirror.fromTextArea($('.codemirror.js')[0], {
+  var inst = [];
+  
+  inst[inst.length] = CodeMirror.fromTextArea($('.codemirror.js')[0], {
     mode: 'javascript',
     theme: 'blackboard',
     lineNumbers: true,
     viewportMargin: Infinity
   });
-  CodeMirror.fromTextArea($('.codemirror.css')[0], {
+  inst[inst.length] = CodeMirror.fromTextArea($('.codemirror.css')[0], {
     mode: 'css',
     theme: 'blackboard',
     lineNumbers: true,
@@ -57,4 +59,14 @@ jQuery(function($){
       $(this).width($(this).parents('.codemirror-container').width());
     });
   }
+  
+  setTimeout(function(){
+    var show = postboxes.pbshow;
+    postboxes.pbshow = function(id){
+      if ( show && typeof(show) == 'function') show(id);
+      if ( id != 'custom-code-meta-box') return;
+      fix_width();
+      for (var i=0; i<inst.length; i++) inst[i].refresh();
+    };
+  },10);
 });
