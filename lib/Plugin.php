@@ -56,10 +56,14 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
       $js_deps = get_post_meta( $post->ID, $this->js_meta_key.'_inline_deps', true);
       $css_deps = get_post_meta( $post->ID, $this->css_meta_key.'_inline_deps', true);
     }
-    if( !is_array( $js_files ) ) $js_files = array();
-    if( !is_array( $css_files ) ) $css_files = array();
-    if( !is_array( $js_deps ) ) $js_deps = array();
-    if( !is_array( $css_deps ) ) $css_deps = array();
+    
+    $js_enabled = get_post_meta( $post->ID, $this->js_meta_key.'_enabled', true);
+    $css_enabled = get_post_meta( $post->ID, $this->css_meta_key.'_enabled', true);
+    
+    if( !is_array( $js_files ) )    $js_files = array();
+    if( !is_array( $css_files ) )   $css_files = array();
+    if( !is_array( $js_deps ) )     $js_deps = array();
+    if( !is_array( $css_deps ) )    $css_deps = array();
     
     
     wp_enqueue_style( 'custom-code-codemirror', CUSTOM_CODE_BASE_URI.'/vendor/CodeMirror/lib/codemirror.css');
@@ -72,10 +76,25 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
     wp_enqueue_script('custom-code-metabox', CUSTOM_CODE_BASE_URI.'/assets/javascripts/metabox.js');
     
     ?>
-    <div class="custom-code">
+    <div class="custom-code<?= $js_enabled ? ' js-enabled' :'' ?><?= $css_enabled ? ' css-enabled' :'' ?>">
       <table class="form-table">
         <tbody>
           <tr>
+            <th scope="row">
+              <label for="<?= $this->js_meta_key ?>_enabled">
+                Enable Javascript
+              </label>
+            </th>
+            <td>
+              <input
+                type="checkbox"
+                name="<?= $this->js_meta_key ?>_enabled"
+                id="<?= $this->js_meta_key ?>_enabled"
+                <?= $js_enabled ? 'checked' : '' ?>
+              />
+            </td>
+          </tr>
+          <tr class="js-row">
             <th scope="row">
               <label for="<?= $this->js_meta_key ?>_add">
                 Javascript Files
@@ -120,7 +139,7 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
               </table>
             </td>
           </tr>
-          <tr>
+          <tr class="js-row">
             <th scope="row">
               <label for="<?= $this->js_meta_key ?>_inline_deps">JS Dependencies</label>
             </th>
@@ -132,7 +151,7 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
               <p>A comma separated list of wordpress javascript files to enqueue by handle (example: jquery)</p>
             </td>
           </tr>
-          <tr>
+          <tr class="js-row">
             <th scope="row">
               <label for="<?= $this->js_meta_key ?>">Inline Javascript</label>
             </th>
@@ -145,8 +164,22 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
             </td>
           </tr>
           
-          
           <tr>
+            <th scope="row">
+              <label for="<?= $this->css_meta_key ?>_enabled">
+                Enable CSS
+              </label>
+            </th>
+            <td>
+              <input
+                type="checkbox"
+                name="<?= $this->css_meta_key ?>_enabled"
+                id="<?= $this->css_meta_key ?>_enabled"
+                <?= $css_enabled ? 'checked' : '' ?>
+              />
+            </td>
+          </tr>
+          <tr class="css-row">
             <th scope="row">
               <label for="<?= $this->css_meta_key ?>_add">
                 Stylesheets
@@ -194,7 +227,7 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
               </table>
             </td>
           </tr>
-          <tr>
+          <tr class="css-row">
             <th scope="row">
               <label for="<?= $this->css_meta_key ?>_inline_deps">CSS Dependencies</label>
             </th>
@@ -206,7 +239,7 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
               <p>A comma separated list of wordpress CSS files to enqueue by handle.</p>
             </td>
           </tr>
-          <tr>
+          <tr class="css-row">
             <th scope="row">
               <label for="<?= $this->css_meta_key ?>">Inline Style</label>
             </th>
@@ -230,6 +263,14 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
    */
   public function save_post( $post_id )
   {
+    
+    // enabled
+    if( isset( $_REQUEST[$this->js_meta_key.'_enabled'] ) ){
+      update_post_meta( $post_id, $this->js_meta_key.'_enabled', $_REQUEST[$this->js_meta_key.'_enabled'] );
+    }
+    if( isset( $_REQUEST[$this->css_meta_key.'_enabled'] ) ){
+      update_post_meta( $post_id, $this->css_meta_key.'_enabled', $_REQUEST[$this->css_meta_key.'_enabled'] );
+    }
     
     // inline
     if( isset( $_REQUEST[$this->js_meta_key] ) ){

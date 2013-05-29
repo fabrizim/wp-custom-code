@@ -88,3 +88,14 @@
   overflow-y: hidden;
   overflow-x: auto;
 }
+
+.custom-code .js-row,
+.custom-code .css-row {
+  display: none;
+}
+
+.js-enabled .js-row,
+.css-enabled .css-row {
+  display: block;
+  display: table-row;
+}
