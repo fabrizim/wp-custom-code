@@ -76,6 +76,7 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
     wp_enqueue_script('custom-code-metabox', CUSTOM_CODE_BASE_URI.'/assets/javascripts/metabox.js');
     
     ?>
+    <input type="hidden" name="_save_custom_code_options" value="1" />
     <div class="custom-code<?= $js_enabled ? ' js-enabled' :'' ?><?= $css_enabled ? ' css-enabled' :'' ?>">
       <table class="form-table">
         <tbody>
@@ -264,13 +265,11 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
   public function save_post( $post_id )
   {
     
+    if( !@$_REQUEST['_save_custom_code_options'] ) return;
+    
     // enabled
-    if( isset( $_REQUEST[$this->js_meta_key.'_enabled'] ) ){
-      update_post_meta( $post_id, $this->js_meta_key.'_enabled', $_REQUEST[$this->js_meta_key.'_enabled'] );
-    }
-    if( isset( $_REQUEST[$this->css_meta_key.'_enabled'] ) ){
-      update_post_meta( $post_id, $this->css_meta_key.'_enabled', $_REQUEST[$this->css_meta_key.'_enabled'] );
-    }
+    update_post_meta( $post_id, $this->js_meta_key.'_enabled', (bool)@$_REQUEST[$this->js_meta_key.'_enabled'] );
+    update_post_meta( $post_id, $this->css_meta_key.'_enabled', (bool)@$_REQUEST[$this->css_meta_key.'_enabled'] );
     
     // inline
     if( isset( $_REQUEST[$this->js_meta_key] ) ){
@@ -326,17 +325,21 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
   public function wp_footer()
   {
     if( is_admin() || !is_singular() ) return;
+    $js_enabled = get_post_meta( get_the_ID(), $this->js_meta_key.'_enabled', true );
     $js = get_post_meta( get_the_ID(), $this->js_meta_key, true );
-    if( !$js ) return;
-    ?>
-    <script type="text/javascript"><?= $js ?></script>
-    <?
+    if( $js_enabled && $js ){
+      ?>
+      <script type="text/javascript"><?= $js ?></script>
+      <?
+    }
     
+    $css_enabled = get_post_meta( get_the_ID(), $this->css_meta_key.'_enabled', true );
     $css = get_post_meta( get_the_ID(), $this->css_meta_key, true );
-    if( !$css ) return;
-    ?>
-    <style type="text/css"><?= $css ?></style>
-    <?
+    if( $css_enabled && $css ){
+      ?>
+      <style type="text/css"><?= $css ?></style>
+      <?
+    }
   }
   
   /**
@@ -346,18 +349,22 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
   {
     if( is_admin() || !is_singular() ) return;
     
+    // enabled
+    $js_enabled = get_post_meta( get_the_ID(), $this->js_meta_key.'_enabled', true );
+    $css_enabled = get_post_meta( get_the_ID(), $this->css_meta_key.'_enabled', true );
+    
     // dependencies
     $js_deps = get_post_meta( get_the_ID(), $this->js_meta_key.'_inline_deps', true);
-    if( $js_deps && is_array($js_deps) ) foreach($js_deps as $dep) wp_enqueue_script($dep);
+    if( $js_enabled && $js_deps && is_array($js_deps) ) foreach($js_deps as $dep) wp_enqueue_script($dep);
     
     $css_deps = get_post_meta( get_the_ID(), $this->css_meta_key.'_inline_deps', true);
-    if( $css_deps && is_array($css_deps) ) foreach($css_deps as $dep) wp_enqueue_style($dep);
+    if( $css_enabled && $css_deps && is_array($css_deps) ) foreach($css_deps as $dep) wp_enqueue_style($dep);
     
     
     // add our scripts if we have any
     $js_files = get_post_meta( get_the_ID(), $this->js_meta_key.'_files', true );
     
-    if( $js_files && is_array($js_files) ) foreach($js_files as $file) {
+    if( $js_enabled && $js_files && is_array($js_files) ) foreach($js_files as $file) {
       $src = preg_replace_callback('/\{\$([^\}]+)\}/', array(&$this,'replacer'), $file['src']);
       $handle = $file['handle']?$file['handle']:$src;
       $deps = $file['deps'];
@@ -366,7 +373,7 @@ class CustomCode_Plugin extends Snap_Wordpress_Plugin
     }
     
     $css_files = get_post_meta( get_the_ID(), $this->css_meta_key.'_files', true );
-    if( $css_files && is_array($css_files) ) foreach($css_files as $file) {
+    if( $css_enabled && $css_files && is_array($css_files) ) foreach($css_files as $file) {
       $src = preg_replace_callback('/\{\$([^\}]+)\}/', array(&$this,'replacer'), $file['src']);
       $handle = $file['handle']?$file['handle']:$src;
       $deps = $file['deps'];
