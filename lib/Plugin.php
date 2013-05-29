@@ -19,10 +19,10 @@
 class CustomCode_Plugin extends Snap_Wordpress_Plugin
 {
   
-  protected $meta_box_id = 'custom-code-meta-box';
+  protected $meta_box_id    = 'custom-code-meta-box';
   protected $meta_box_title = 'Custom Code';
-  protected $js_meta_key = '_customcode_js';
-  protected $css_meta_key = '_customcode_css';
+  protected $js_meta_key    = '_customcode_js';
+  protected $css_meta_key   = '_customcode_css';
   
   /**
    * @wp.action

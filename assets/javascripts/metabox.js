@@ -36,16 +36,6 @@ jQuery(function($){
     }
   });
   
-  var $customcode = $('.custom-code');
-  $('.custom-code [name="_customcode_js_enabled"]').change(function(){
-    $customcode[ $(this).is(':checked') ? 'addClass' : 'removeClass']('js-enabled');
-    fix_width();
-  });
-  $('.custom-code [name="_customcode_css_enabled"]').change(function(){
-    $customcode[ $(this).is(':checked') ? 'addClass' : 'removeClass']('css-enabled');
-    fix_width();
-  });
-  
   var inst = [];
   
   inst[inst.length] = CodeMirror.fromTextArea($('.codemirror.js')[0], {
@@ -79,4 +69,16 @@ jQuery(function($){
       for (var i=0; i<inst.length; i++) inst[i].refresh();
     };
   },10);
+  
+  var $customcode = $('.custom-code');
+  $('.custom-code [name="_customcode_js_enabled"]').change(function(){
+    $customcode[ $(this).is(':checked') ? 'addClass' : 'removeClass']('js-enabled');
+    fix_width();
+    for (var i=0; i<inst.length; i++) inst[i].refresh();
+  });
+  $('.custom-code [name="_customcode_css_enabled"]').change(function(){
+    $customcode[ $(this).is(':checked') ? 'addClass' : 'removeClass']('css-enabled');
+    fix_width();
+    for (var i=0; i<inst.length; i++) inst[i].refresh();
+  });
 });
